@@ -13,6 +13,7 @@ async function loginAsync(credentials) {
      WHERE email = $1 AND password = $2
         `, [credentials.email, credentials.password]
     );
+    console.log(userResult)
     const user = userResult.rows[0];
     if (!userResult || userResult.rowCount < 1) return null;
     delete user.password;
