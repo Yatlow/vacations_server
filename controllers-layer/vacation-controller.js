@@ -139,10 +139,9 @@ function verifyVacationIsValid(vacation, action) {
 router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => {
     const [errors, validVacation] = verifyVacationIsValid(request.body, "put");
     try {
+        console("1")
         if (request.files && request.files.image) {
             const image = request.files.image;
-            // const absolutePath = path.join(__dirname, request.body.path, request.body.picture_url);
-            // await image.mv(absolutePath);
             const result = await uploadToCloudinary(image.data); 
             validVacation.picture_url = result.secure_url;
         }
@@ -150,8 +149,10 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
             return response.status(400).send({ message: "Server error", errors });
         }
         else {
+            console("2")
             const result = await vacationLogic.editVacationAsync(validVacation);
             response.send(result);
+            console("3")
         }
     } catch (error) {
         console.log(error);
@@ -164,10 +165,7 @@ router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
     try {
         if (request.files && request.files.image) {
             const image = request.files.image;
-            // const absolutePath = path.join(__dirname, request.body.path, request.body.picture_url);
-            // await image.mv(absolutePath);
             const result = await uploadToCloudinary(image.data);
-            console.log(result)
             validVacation.picture_url = result.secure_url;
         } else { validVacation.picture_url = "unknown" }
         if (Object.keys(errors).length > 0) {
@@ -175,7 +173,7 @@ router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
         }
         else {
             const result = await vacationLogic.addVacationAsync(validVacation);
-            response.send({...result,picture_url:validVacation.picture_url});
+            response.send(result);
         }
     } catch (error) {
         console.log(error);
