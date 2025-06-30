@@ -28,6 +28,7 @@ router.post("/register", async (request, response) => {
         }
         const credentials = new Credentials(request.body);
         const results = await authLogic.getAllEmailsAsync();
+        console.log(results)
         for (const result of results) {
             if (result.email === credentials.email) {
                 return response.status(400).send("this email is already used");

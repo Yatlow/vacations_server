@@ -14,7 +14,7 @@ async function loginAsync(credentials) {
         `, [credentials.email, credentials.password]
     );
     console.log(user)
-    if (!user || user.length < 1) return null;
+    if (!user || user.rowCount < 1) return null;
     delete user[0].password;
 
     user[0].token = jwt.sign({ user: user[0] }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
