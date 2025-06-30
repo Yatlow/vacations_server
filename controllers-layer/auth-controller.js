@@ -12,6 +12,7 @@ router.post("/login", async (request, response) => {
         if (errors) return response.status(400).send(errors);
 
         const loggedInUser = await authLogic.loginAsync(credentials);
+        console.log(loggedInUser)
         if (!loggedInUser) return response.status(401).send("Incorrect username or password.");
 
         response.send(loggedInUser);
