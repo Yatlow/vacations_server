@@ -17,8 +17,8 @@ async function loginAsync(credentials) {
     const user = userResult.rows[0];
     delete user.password;
 
-    user.token = jwt.sign({ user: user[0] }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
-    user.refreshToken = jwt.sign({ user: user[0] }, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    user.token = jwt.sign({ user }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    user.refreshToken = jwt.sign({ user}, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
     return user;
 }
 
@@ -30,17 +30,25 @@ async function registerAsync(user) {
   VALUES ($1, $2, $3, $4, $5, $6)`;
     const params = [user.uuid, user.firstName, user.familyName, user.credentials.email, user.password, user.role]
     await dal.executeQueryAsync(sql, params);
-    delete user.credentials;
-    delete user.password;
-    user.token = jwt.sign({ user: user }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
-    user.refreshToken = jwt.sign({ user: user }, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    
+    
+     const userPayload = {
+        uuid: user.uuid,
+        firstName: user.firstName,
+        familyName: user.familyName,
+        email: user.credentials.email,
+        role: user.role
+    };
+
+    user.token = jwt.sign({ user: userPayload }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
+    user.refreshToken = jwt.sign({ user: userPayload }, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
     return user;
 }
 
 async function refreshTokenAsync(refreshToken) {
     try {
         const decoded = await verifyAsync(refreshToken, process.env.REFRESH_SALT.refreshSalt);
-        const freshToken = jwt.sign({ user: decoded }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
+        const freshToken = jwt.sign({ user: decoded.user }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
         return freshToken;
     } catch (error) {
         if (error.message === "jwt expired") {
