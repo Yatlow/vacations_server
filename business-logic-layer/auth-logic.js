@@ -8,6 +8,7 @@ const verifyAsync = util.promisify(jwt.verify);
 
 async function loginAsync(credentials) {
     credentials.password = hash(credentials.password);
+    console.log(credentials)
     const userResult  = await dal.executeQueryAsync(
         `SELECT * FROM users 
      WHERE email = $1 AND password = $2
