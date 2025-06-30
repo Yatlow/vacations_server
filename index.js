@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const config = require("../config/config.json");
 
 const vacationController = require("./controllers-layer/vacation-controller");
 const authController = require("./controllers-layer/auth-controller");
