@@ -6,6 +6,7 @@ const path = require("path");
 const fileUpload = require("express-fileupload");
 
 
+
 const router = express.Router();
 router.use(fileUpload());
 
@@ -22,7 +23,7 @@ router.get("/", verifyLoggedIn, async (request, response) => {
 });
 
 router.get("/image", verifyLoggedIn, (request, response) => {
-    const ImgPath = request.query.path || "../assets/images";
+    const ImgPath = "../assets/images";
     const image = request.query.image;
     if (!image) {
         return response.status(400).send({ message: "Missing image parameter" });
