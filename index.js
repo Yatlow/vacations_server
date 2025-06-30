@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const dal = require("../data-access-layer/dal");
 
 const vacationController = require("./controllers-layer/vacation-controller");
 const authController = require("./controllers-layer/auth-controller");
@@ -12,7 +13,12 @@ server.use(express.json());
 server.use("/vacations", vacationController);
 server.use("/auth", authController);
 server.get("/ping", async (req, res) => {
-    res.send("hello!")
+    const res= await dal.executeQueryAsync(
+            `select * from users 
+            `, []
+        );
+    res.send(res)
+    // res.send("hello!")
 })
 
 server.use("*", (req, res) => {
