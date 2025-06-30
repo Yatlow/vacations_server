@@ -26,7 +26,7 @@ async function registerAsync(user) {
     user.password = hash(user.credentials.password);
     user.uuid = uuid.v4();
 
-    const sql = `INSERT INTO users (uuid, firstName, familyName, email, password, role)
+    const sql = `INSERT INTO users (uuid, first_name, family_name, email, password, role)
   VALUES ($1, $2, $3, $4, $5, $6)`;
     const params = [user.uuid, user.firstName, user.familyName, user.credentials.email, user.password, user.role]
     await dal.executeQueryAsync(sql, params);
