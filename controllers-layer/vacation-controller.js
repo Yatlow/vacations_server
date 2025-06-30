@@ -4,8 +4,30 @@ const verifyLoggedIn = require("../middleware/verify-logged-in");
 const verifyAdmin = require("../middleware/verify-admin");
 const path = require("path");
 const fileUpload = require("express-fileupload");
+const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
 
 
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key:    process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+
+function uploadToCloudinary(buffer) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "vacations" },
+            (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            }
+        );
+        streamifier.createReadStream(buffer).pipe(stream);
+    });
+}
 
 const router = express.Router();
 router.use(fileUpload());
@@ -119,8 +141,10 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
     try {
         if (request.files && request.files.image) {
             const image = request.files.image;
-            const absolutePath = path.join(__dirname, request.body.path, request.body.pictureUrl);
-            await image.mv(absolutePath);
+            // const absolutePath = path.join(__dirname, request.body.path, request.body.pictureUrl);
+            // await image.mv(absolutePath);
+            const result = await uploadToCloudinary(image.data); 
+            validVacation.pictureUrl = result.secure_url;
         }
         if (Object.keys(errors).length > 0) {
             return response.status(400).send({ message: "Server error", errors });
@@ -140,8 +164,10 @@ router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
     try {
         if (request.files && request.files.image) {
             const image = request.files.image;
-            const absolutePath = path.join(__dirname, request.body.path, request.body.pictureUrl);
-            await image.mv(absolutePath);
+            // const absolutePath = path.join(__dirname, request.body.path, request.body.pictureUrl);
+            // await image.mv(absolutePath);
+            const result = await  await uploadToCloudinary(image.data); 
+            validVacation.pictureUrl = result.secure_url;
         } else { validVacation.pictureUrl = "unknown" }
         if (Object.keys(errors).length > 0) {
             return response.status(400).send({ message: "Server error", errors });
