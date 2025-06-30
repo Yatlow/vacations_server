@@ -161,13 +161,13 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
 
 router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
     const [errors, validVacation] = verifyVacationIsValid(request.body, "post");
-    
     try {
         if (request.files && request.files.image) {
             const image = request.files.image;
             // const absolutePath = path.join(__dirname, request.body.path, request.body.picture_url);
             // await image.mv(absolutePath);
             const result = await uploadToCloudinary(image.data);
+            console.log(result)
             validVacation.picture_url = result.secure_url;
         } else { validVacation.picture_url = "unknown" }
         if (Object.keys(errors).length > 0) {
@@ -175,8 +175,7 @@ router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
         }
         else {
             const result = await vacationLogic.addVacationAsync(validVacation);
-            console.log (result)
-            response.send(result);
+            response.send({...result,picture_url:validVacation.picture_url});
         }
     } catch (error) {
         console.log(error);
