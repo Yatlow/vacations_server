@@ -11,22 +11,22 @@ function getAllTrackingsAsync() {
     `);
 };
 
-function addTrackingAsync(uuid, vacationId) {
+function addTrackingAsync(uuid, vacation_id) {
     return dal.executeQueryAsync(`
-        INSERT INTO tracked (uid, vacationId) VALUES ($1, $2)
-        `, [uuid, vacationId])
+        INSERT INTO tracked (uid, vacation_id) VALUES ($1, $2)
+        `, [uuid, vacation_id])
 }
 
-function deleteTrackingAsync(uuid, vacationId) {
+function deleteTrackingAsync(uuid, vacation_id) {
     return dal.executeQueryAsync(`
-        DELETE FROM tracked WHERE uid = $1 AND vacationId = $2
-        `, [uuid, vacationId])
+        DELETE FROM tracked WHERE uid = $1 AND vacation_id = $2
+        `, [uuid, vacation_id])
 }
 
-function deleteVacationAsync(vacationId) {
+function deleteVacationAsync(vacation_id) {
     return dal.executeQueryAsync(`
         DELETE from vacations where id= $1
-        `, [vacationId])
+        `, [vacation_id])
 }
 
 function editVacationAsync(vacationData) {
