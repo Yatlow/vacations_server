@@ -8,13 +8,11 @@ const verifyAsync = util.promisify(jwt.verify);
 
 async function loginAsync(credentials) {
     credentials.password = hash(credentials.password);
-    console.log(credentials.password)
     const user = await dal.executeQueryAsync(
         `SELECT * FROM users 
      WHERE email = $1 AND password = $2
         `, [credentials.email, credentials.password]
     );
-    console.log(user)
     if (!user || user.length < 1) return null;
     delete user[0].password;
 
