@@ -8,13 +8,14 @@ const verifyAsync = util.promisify(jwt.verify);
 
 async function loginAsync(credentials) {
     credentials.password = hash(credentials.password);
-    const user = await dal.executeQueryAsync(
+    const userResult  = await dal.executeQueryAsync(
         `SELECT * FROM users 
      WHERE email = $1 AND password = $2
         `, [credentials.email, credentials.password]
     );
-    console.log(user)
-    if (!user || user.rowCount < 1) return null;
+    const user = userResult.rows[0];
+    if (!userResult || userResult.rowCount < 1) return null;
+    delete user.password;
     delete user[0].password;
 
     user[0].token = jwt.sign({ user: user[0] }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
@@ -39,8 +40,8 @@ async function registerAsync(user) {
 
 async function refreshTokenAsync(refreshToken) {
     try {
-        const decoded = await verifyAsync(refreshToken, process.env.AUTH_SALT.refreshSalt);
-        const freshToken = jwt.sign({ user: decoded }, process.env.REFRESH_SALT, { expiresIn: process.env.AUTH_EXP });
+        const decoded = await verifyAsync(refreshToken, process.env.REFRESH_SALT.refreshSalt);
+        const freshToken = jwt.sign({ user: decoded }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
         return freshToken;
     } catch (error) {
         if (error.message === "jwt expired") {

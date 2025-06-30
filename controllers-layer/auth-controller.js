@@ -56,7 +56,7 @@ router.post("/refresh", async (request, response) => {
     try {
         const refreshToken = request.body.refreshToken;
         if (!refreshToken) {
-            return response.status(403);
+            return response.status(403).send("No refresh token provided");
         }        
         const newToken = await authLogic.refreshTokenAsync(refreshToken);
         response.send(newToken);
