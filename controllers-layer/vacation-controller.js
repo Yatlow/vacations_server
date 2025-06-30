@@ -166,7 +166,7 @@ router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
             const image = request.files.image;
             // const absolutePath = path.join(__dirname, request.body.path, request.body.picture_url);
             // await image.mv(absolutePath);
-            const result = await  await uploadToCloudinary(image.data); 
+            const result = await uploadToCloudinary(image.data);
             validVacation.picture_url = result.secure_url;
         } else { validVacation.picture_url = "unknown" }
         if (Object.keys(errors).length > 0) {
@@ -174,6 +174,7 @@ router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
         }
         else {
             const result = await vacationLogic.addVacationAsync(validVacation);
+            console.log (result)
             response.send(result);
         }
     } catch (error) {
