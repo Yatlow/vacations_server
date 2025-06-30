@@ -15,21 +15,7 @@ server.use("/auth", authController);
 server.get("/ping", async (req, res) => {
     res.send("hello!")
 })
-server.get("/img", async (req, res) => {
-    const ImgPath =  "../assets/images";
-        const image = "barcelona_1750800545315.jpg";
-        if (!image) {
-            return response.status(400).send({ message: "Missing image parameter" });
-        }
-        const imagesFolder = path.join(__dirname, ImgPath);
-        const filePath = path.join(imagesFolder, image);
-    
-        response.sendFile(filePath, (err) => {
-            if (err) {
-                response.status(500).send("Could not send file.");
-            }
-        });
-})
+
 
 server.use("*", (req, res) => {
     res.status(404).send(`Route not found ${req.originalUrl}`);

@@ -13,7 +13,6 @@ router.use(fileUpload());
 router.get("/", verifyLoggedIn, async (request, response) => {
     try {
         const result = await vacationLogic.getAllVacationsAsync();
-        console.log(result)
         response.send(result);
     }
     catch (error) {

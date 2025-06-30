@@ -1,4 +1,5 @@
 function verifyAdmin(request, response, next) {
+    console.log(request.user)
     if (request.user && request.user.role=="admin")
         next();
     else {
