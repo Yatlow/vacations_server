@@ -124,10 +124,10 @@ function verifyVacationIsValid(vacation, action) {
     if (!vacation.end_time || isNaN(new Date(vacation.end_time).getTime())) {
         errors.end_time = "cannot edit or add without a valid end time";
     }
-    if (action === "post" && new Date(vacation.start).getDate() < new Date().getDate()) {
+    if (action === "post" && new Date(vacation.start_time).getDate() < new Date().getDate()) {
         errors.start = "Start date cannot be before today"
     }
-    if (new Date(vacation.end).getTime() < new Date(vacation.start).getTime()) {
+    if (new Date(vacation.end_time).getTime() < new Date(vacation.start_time).getTime()) {
         errors.time = "end date cannot be before or at start date";
     }
     if (!vacation.price || isNaN(+vacation.price) || vacation.price < 0 || vacation.price > 10000) {
@@ -139,7 +139,7 @@ function verifyVacationIsValid(vacation, action) {
 router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => {
     const [errors, validVacation] = verifyVacationIsValid(request.body, "put");
     try {
-        console("1")
+        console.log("1")
         if (request.files && request.files.image) {
             const image = request.files.image;
             const result = await uploadToCloudinary(image.data); 
@@ -149,10 +149,10 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
             return response.status(400).send({ message: "Server error", errors });
         }
         else {
-            console("2")
+            console.log("2")
             const result = await vacationLogic.editVacationAsync(validVacation);
             response.send(result);
-            console("3")
+            console.log("3")
         }
     } catch (error) {
         console.log(error);
