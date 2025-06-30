@@ -30,28 +30,28 @@ function deleteVacationAsync(vacationId) {
 }
 
 function editVacationAsync(vacationData) {
-    if (vacationData.pictureUrl) {
+    if (vacationData.picture_url) {
         return dal.executeQueryAsync(`
-        UPDATE vacations SET destination=$1, description=$2, start_time=$3, end_time=$4, price=$5, pictureUrl=$6
+        UPDATE vacations SET destination=$1, description=$2, start_time_time=$3, end_time_time=$4, price=$5, picture_url=$6
         WHERE id=$7;
     `, [
             vacationData.destination,
             vacationData.description,
-            vacationData.start,
-            vacationData.end,
+            vacationData.start_time,
+            vacationData.end_time,
             vacationData.price,
-            vacationData.pictureUrl,
+            vacationData.picture_url,
             vacationData.id
         ]);
     } else {
         return dal.executeQueryAsync(`
-        UPDATE vacations SET destination=$1, description=$2, start_time=$3, end_time=$4, price=$5
+        UPDATE vacations SET destination=$1, description=$2, start_time_time=$3, end_time_time=$4, price=$5
         WHERE id=$6;
     `, [
             vacationData.destination,
             vacationData.description,
-            vacationData.start,
-            vacationData.end,
+            vacationData.start_time,
+            vacationData.end_time,
             vacationData.price,
             vacationData.id
         ]);
@@ -59,15 +59,15 @@ function editVacationAsync(vacationData) {
 }
 function addVacationAsync(vacationData) {
     return dal.executeQueryAsync(`
-        INSERT INTO vacations (destination, description, start_time, end_time, price, pictureUrl)
+        INSERT INTO vacations (destination, description, start_time_time, end_time_time, price, picture_url)
         values ($1,$2,$3,$4,$5,$6)
     `, [
         vacationData.destination,
         vacationData.description,
-        vacationData.start,
-        vacationData.end,
+        vacationData.start_time,
+        vacationData.end_time,
         vacationData.price,
-        vacationData.pictureUrl,
+        vacationData.picture_url,
     ]);
 
 }

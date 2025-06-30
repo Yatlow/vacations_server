@@ -141,10 +141,10 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
     try {
         if (request.files && request.files.image) {
             const image = request.files.image;
-            // const absolutePath = path.join(__dirname, request.body.path, request.body.pictureUrl);
+            // const absolutePath = path.join(__dirname, request.body.path, request.body.picture_url);
             // await image.mv(absolutePath);
             const result = await uploadToCloudinary(image.data); 
-            validVacation.pictureUrl = result.secure_url;
+            validVacation.picture_url = result.secure_url;
         }
         if (Object.keys(errors).length > 0) {
             return response.status(400).send({ message: "Server error", errors });
@@ -164,11 +164,11 @@ router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
     try {
         if (request.files && request.files.image) {
             const image = request.files.image;
-            // const absolutePath = path.join(__dirname, request.body.path, request.body.pictureUrl);
+            // const absolutePath = path.join(__dirname, request.body.path, request.body.picture_url);
             // await image.mv(absolutePath);
             const result = await  await uploadToCloudinary(image.data); 
-            validVacation.pictureUrl = result.secure_url;
-        } else { validVacation.pictureUrl = "unknown" }
+            validVacation.picture_url = result.secure_url;
+        } else { validVacation.picture_url = "unknown" }
         if (Object.keys(errors).length > 0) {
             return response.status(400).send({ message: "Server error", errors });
         }

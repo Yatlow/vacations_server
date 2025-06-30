@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const dal = require("./data-access-layer/dal");
 
 const vacationController = require("./controllers-layer/vacation-controller");
 const authController = require("./controllers-layer/auth-controller");
