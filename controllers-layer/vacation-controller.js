@@ -71,7 +71,7 @@ router.get("/track", verifyLoggedIn, async (request, response) => {
 router.post("/track", verifyLoggedIn, async (request, response) => {
     const action = request.body.action;
     const uuid = request.body.uuid;
-    const vacationId = request.body.vacationId;
+    const vacation_id = request.body.vacation_id;
     if (!action) {
         return response.status(400).response("must send an action (delete/add)");
     }
@@ -83,11 +83,11 @@ router.post("/track", verifyLoggedIn, async (request, response) => {
     }
     try {
         if (action === "delete") {
-            const result = await vacationLogic.deleteTrackingAsync(uuid, vacationId);
+            const result = await vacationLogic.deleteTrackingAsync(uuid, vacation_id);
             response.send(result);
         }
         if (action === "add") {
-            const result = await vacationLogic.addTrackingAsync(uuid, vacationId);
+            const result = await vacationLogic.addTrackingAsync(uuid, vacation_id);
             response.send(result);
         }
     } catch (error) {
@@ -139,7 +139,6 @@ function verifyVacationIsValid(vacation, action) {
 router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => {
     const [errors, validVacation] = verifyVacationIsValid(request.body, "put");
     try {
-        console.log("1")
         if (request.files && request.files.image) {
             const image = request.files.image;
             const result = await uploadToCloudinary(image.data); 
@@ -149,10 +148,8 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
             return response.status(400).send({ message: "Server error", errors });
         }
         else {
-            console.log("2")
             const result = await vacationLogic.editVacationAsync(validVacation);
             response.send(result);
-            console.log("3")
         }
     } catch (error) {
         console.log(error);
