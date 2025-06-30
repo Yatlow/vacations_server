@@ -12,6 +12,7 @@ function verifyLoggedIn(request, response, next) {
             return response.status(401).send("You are not logged-in.");
         }
         else {
+            console.log(decodedToken.user)
             request.user = decodedToken.user;            
             next();
         }
