@@ -21,8 +21,8 @@ server.use("*", (req, res) => {
 });
 
 
-server.listen(config.server.port, () => {
-    console.log(`Listening on ${config.server.port}`);
+server.listen(6500, () => {
+    console.log(`Listening on ${6500}`);
 }).on("error", (err) => {
     console.log(err);
     if (err.code === "EADDRINUSE")

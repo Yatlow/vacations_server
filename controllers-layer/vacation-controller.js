@@ -4,8 +4,6 @@ const verifyLoggedIn = require("../middleware/verify-logged-in");
 const verifyAdmin = require("../middleware/verify-admin");
 const path = require("path");
 const fileUpload = require("express-fileupload");
-const { log } = require("console");
-const { array } = require("joi");
 
 
 const router = express.Router();

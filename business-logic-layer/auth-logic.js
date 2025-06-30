@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 const dal = require("../data-access-layer/dal");
 const crypto = require("crypto");
 const uuid = require("uuid");
-const config = require("../../config/config.json");
 const util = require("util");
+require('dotenv').config();
 const verifyAsync = util.promisify(jwt.verify);
 
 async function loginAsync(credentials) {
@@ -17,8 +17,8 @@ async function loginAsync(credentials) {
     if (!user || user.length < 1) return null;
     delete user[0].password;
 
-    user[0].token = jwt.sign({ user: user[0] }, config.authSecrets.salt, { expiresIn: config.server.tokenExpiration });
-    user[0].refreshToken = jwt.sign({ user: user[0] }, config.authSecrets.refreshSalt, { expiresIn: config.server.refreshExpiration });
+    user[0].token = jwt.sign({ user: user[0] },  process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    user[0].refreshToken = jwt.sign({ user: user[0] },  process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP});
     return user[0];
 }
 
@@ -32,15 +32,15 @@ async function registerAsync(user) {
     await dal.executeQueryAsync(sql, params);
     delete user.credentials;
     delete user.password;
-    user.token = jwt.sign({ user: user }, config.authSecrets.salt, { expiresIn: config.server.tokenExpiration });
-    user.refreshToken = jwt.sign({ user: user }, config.authSecrets.refreshSalt, { expiresIn: config.server.refreshExpiration });
+    user.token = jwt.sign({ user: user },process.env.AUTH_SALT, { expiresIn:process.env.AUTH_EXP });
+    user.refreshToken = jwt.sign({ user: user },process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
     return user;
 }
 
 async function refreshTokenAsync(refreshToken) {
     try {
-        const decoded = await verifyAsync(refreshToken, config.authSecrets.refreshSalt);
-        const freshToken = jwt.sign({ user: decoded }, config.authSecrets.salt, { expiresIn: config.server.tokenExpiration });
+        const decoded = await verifyAsync(refreshToken, process.env.AUTH_SALT.refreshSalt);
+        const freshToken = jwt.sign({ user: decoded }, process.env.REFRESH_SALT, { expiresIn: process.env.AUTH_EXP });
         return freshToken;
     } catch (error) {
         if (error.message === "jwt expired") {
@@ -61,7 +61,7 @@ async function getAllEmailsAsync() {
 
 function hash(plainText) {
     if (!plainText) return null;
-    return crypto.createHmac("sha512", config.authSecrets.hashSalt).update(plainText).digest("hex");
+    return crypto.createHmac("sha512", process.env.HASH_SALT).update(plainText).digest("hex");
 
 }
 
