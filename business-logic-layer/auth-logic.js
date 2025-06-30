@@ -10,9 +10,8 @@ async function loginAsync(credentials) {
     credentials.password = hash(credentials.password);
     console.log(credentials.password)
     const user = await dal.executeQueryAsync(
-        `select * from users 
-        where email=?
-        and password=?
+       `SELECT * FROM users 
+     WHERE email = $1 AND password = $2,
         `, [credentials.email, credentials.password]
     );
     console.log(user)
@@ -29,7 +28,7 @@ async function registerAsync(user) {
     user.uuid = uuid.v4();
 
     const sql = `INSERT INTO users (uuid, firstName, familyName, email, password, role)
-    VALUES(?,?,?,?,?,?)`;
+  VALUES ($1, $2, $3, $4, $5, $6)`;
     const params = [user.uuid, user.firstName, user.familyName, user.credentials.email, user.password, user.role]
     await dal.executeQueryAsync(sql, params);
     delete user.credentials;
