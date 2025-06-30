@@ -82,7 +82,6 @@ router.post("/track", verifyLoggedIn, async (request, response) => {
         return response.status(400).send("must send vacation Id");
     }
     try {
-        console.log("111")
         if (action === "delete") {
             const result = await vacationLogic.deleteTrackingAsync(uuid, vacation_id);
             return response.send(result);
