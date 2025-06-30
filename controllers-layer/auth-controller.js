@@ -28,7 +28,7 @@ router.post("/register", async (request, response) => {
         }
         const credentials = new Credentials(request.body);
         const results = await authLogic.getAllEmailsAsync();
-        console.log(results.rows[0])
+        console.log(results)
         const emails=results.rows[0];
         for (const email of emails) {
             if (email.email === credentials.email) {
