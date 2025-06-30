@@ -1,6 +1,6 @@
 function verifyAdmin(request, response, next) {
-    console.log(request.headers.role)
-    if (request.headers.role=="admin")
+    console.log(request.user)
+    if (request.user && request.user.role=="admin")
         next();
     else {
         return response.status(401).send("Unauthorized (admin)");
