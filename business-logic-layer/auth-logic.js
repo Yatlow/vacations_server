@@ -30,8 +30,7 @@ async function registerAsync(user) {
     const sql = `INSERT INTO users (uuid, firstName, familyName, email, password, role)
   VALUES ($1, $2, $3, $4, $5, $6)`;
     const params = [user.uuid, user.firstName, user.familyName, user.credentials.email, user.password, user.role]
-    const resu= await dal.executeQueryAsync(sql, params);
-    console.log(resu)
+    await dal.executeQueryAsync(sql, params);
     delete user.credentials;
     delete user.password;
     user.token = jwt.sign({ user: user }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
