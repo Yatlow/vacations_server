@@ -19,7 +19,6 @@ async function loginAsync(credentials) {
 
     user.token = jwt.sign({ user: user[0] }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
     user.refreshToken = jwt.sign({ user: user[0] }, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
-    console.log(user)
     return user;
 }
 
