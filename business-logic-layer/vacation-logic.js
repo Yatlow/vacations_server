@@ -59,13 +59,13 @@ function editVacationAsync(vacationData) {
 }
 async function addVacationAsync(vacationData) {
     const lastId=await dal.executeQueryAsync(`SELECT MAX(id) FROM vacations;`,[]);
-    console.log(lastId)
+    console.log(lastId.rows[0].max)
     return dal.executeQueryAsync(`
         INSERT INTO vacations (id, destination, description, start_time, end_time, price, picture_url)
         values ($1,$2,$3,$4,$5,$6,$7)
         RETURNING id;
     `, [
-        lastId+1,
+        lastId.rows[0].max+1,
         vacationData.destination,
         vacationData.description,
         vacationData.start_time,
