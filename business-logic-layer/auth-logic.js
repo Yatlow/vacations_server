@@ -8,13 +8,11 @@ const verifyAsync = util.promisify(jwt.verify);
 
 async function loginAsync(credentials) {
     credentials.password = hash(credentials.password);
-    console.log(credentials)
     const userResult  = await dal.executeQueryAsync(
         `SELECT * FROM users 
      WHERE email = $1 AND password = $2
         `, [credentials.email, credentials.password]
     );
-    console.log(userResult)
     if (!userResult || userResult.rowCount < 1) return null;
     const user = userResult.rows[0];
     delete user.password;
@@ -32,7 +30,8 @@ async function registerAsync(user) {
     const sql = `INSERT INTO users (uuid, firstName, familyName, email, password, role)
   VALUES ($1, $2, $3, $4, $5, $6)`;
     const params = [user.uuid, user.firstName, user.familyName, user.credentials.email, user.password, user.role]
-    await dal.executeQueryAsync(sql, params);
+    const resu= await dal.executeQueryAsync(sql, params);
+    console.log(resu)
     delete user.credentials;
     delete user.password;
     user.token = jwt.sign({ user: user }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
