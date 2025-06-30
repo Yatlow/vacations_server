@@ -13,11 +13,11 @@ server.use(express.json());
 server.use("/vacations", vacationController);
 server.use("/auth", authController);
 server.get("/ping", async (req, res) => {
-    const res= await dal.executeQueryAsync(
+    const resaul= await dal.executeQueryAsync(
             `select * from users 
             `, []
         );
-    res.send(res)
+    res.send(resaul)
     // res.send("hello!")
 })
 
