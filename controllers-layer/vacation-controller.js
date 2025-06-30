@@ -73,22 +73,22 @@ router.post("/track", verifyLoggedIn, async (request, response) => {
     const uuid = request.body.uuid;
     const vacation_id = request.body.vacation_id;
     if (!action) {
-        return response.status(400).response("must send an action (delete/add)");
+        return response.status(400).send("must send an action (delete/add)");
     }
     if (!uuid) {
-        return response.status(400).response("must send user Id");
+        return response.status(400).send("must send user Id");
     }
-    if (!vacationId) {
-        return response.status(400).response("must send vacation Id");
+    if (!vacation_id) {
+        return response.status(400).send("must send vacation Id");
     }
     try {
         if (action === "delete") {
             const result = await vacationLogic.deleteTrackingAsync(uuid, vacation_id);
-            response.send(result);
+            return response.send(result);
         }
         if (action === "add") {
             const result = await vacationLogic.addTrackingAsync(uuid, vacation_id);
-            response.send(result);
+            return response.send(result);
         }
     } catch (error) {
         response.status(500).send("Could not change tracking");
