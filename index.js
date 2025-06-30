@@ -16,7 +16,7 @@ server.get("/ping", async (req, res) => {
     res.send("hello!")
 })
 server.get("/img", async (req, res) => {
-    const ImgPath = request.query.path || "../assets/images";
+    const ImgPath =  "../assets/images";
         const image = "barcelona_1750800545315.jpg";
         if (!image) {
             return response.status(400).send({ message: "Missing image parameter" });
