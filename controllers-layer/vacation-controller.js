@@ -161,6 +161,7 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
 
 router.post("/add", verifyLoggedIn, verifyAdmin, async (request, response) => {
     const [errors, validVacation] = verifyVacationIsValid(request.body, "post");
+    
     try {
         if (request.files && request.files.image) {
             const image = request.files.image;
