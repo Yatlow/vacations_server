@@ -61,6 +61,7 @@ function addVacationAsync(vacationData) {
     return dal.executeQueryAsync(`
         INSERT INTO vacations (destination, description, start_time, end_time, price, picture_url)
         values ($1,$2,$3,$4,$5,$6)
+        RETURNING id;
     `, [
         vacationData.destination,
         vacationData.description,
