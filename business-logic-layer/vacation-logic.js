@@ -32,7 +32,7 @@ function deleteVacationAsync(vacationId) {
 function editVacationAsync(vacationData) {
     if (vacationData.pictureUrl) {
         return dal.executeQueryAsync(`
-        UPDATE vacations SET destination=$1, description=$2, start=$3, end=$4, price=$5, pictureUrl=$6
+        UPDATE vacations SET destination=$1, description=$2, start_time=$3, end_time=$4, price=$5, pictureUrl=$6
         WHERE id=$7;
     `, [
             vacationData.destination,
@@ -45,7 +45,7 @@ function editVacationAsync(vacationData) {
         ]);
     } else {
         return dal.executeQueryAsync(`
-        UPDATE vacations SET destination=$1, description=$2, start=$3, end=$4, price=$5
+        UPDATE vacations SET destination=$1, description=$2, start_time=$3, end_time=$4, price=$5
         WHERE id=$6;
     `, [
             vacationData.destination,
@@ -59,7 +59,7 @@ function editVacationAsync(vacationData) {
 }
 function addVacationAsync(vacationData) {
     return dal.executeQueryAsync(`
-        INSERT INTO vacations (destination, description, start, end, price, pictureUrl)
+        INSERT INTO vacations (destination, description, start_time, end_time, price, pictureUrl)
         values ($1,$2,$3,$4,$5,$6)
     `, [
         vacationData.destination,
