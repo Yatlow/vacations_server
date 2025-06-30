@@ -118,11 +118,11 @@ function verifyVacationIsValid(vacation, action) {
     if (!vacation.description) {
         errors.description = "cannot edit or add without a valid description";
     }
-    if (!vacation.start || isNaN(new Date(vacation.start).getTime())) {
-        errors.start = "cannot edit or add without a valid start time";
+    if (!vacation.start_time || isNaN(new Date(vacation.start_time).getTime())) {
+        errors.start_time = "cannot edit or add without a valid start time";
     }
-    if (!vacation.end || isNaN(new Date(vacation.end).getTime())) {
-        errors.end = "cannot edit or add without a valid end time";
+    if (!vacation.end_time || isNaN(new Date(vacation.end_time).getTime())) {
+        errors.end_time = "cannot edit or add without a valid end time";
     }
     if (action === "post" && new Date(vacation.start).getDate() < new Date().getDate()) {
         errors.start = "Start date cannot be before today"
