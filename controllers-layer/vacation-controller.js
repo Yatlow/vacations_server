@@ -123,7 +123,6 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
             await image.mv(absolutePath);
         }
         if (Object.keys(errors).length > 0) {
-            console.log(validVacation);
             return response.status(400).send({ message: "Server error", errors });
         }
         else {
