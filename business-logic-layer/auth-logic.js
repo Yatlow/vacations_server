@@ -10,16 +10,16 @@ async function loginAsync(credentials) {
     credentials.password = hash(credentials.password);
     console.log(credentials.password)
     const user = await dal.executeQueryAsync(
-       `SELECT * FROM users 
-     WHERE email = $1 AND password = $2,
+        `SELECT * FROM users 
+     WHERE email = $1 AND password = $2
         `, [credentials.email, credentials.password]
     );
     console.log(user)
     if (!user || user.length < 1) return null;
     delete user[0].password;
 
-    user[0].token = jwt.sign({ user: user[0] },  process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
-    user[0].refreshToken = jwt.sign({ user: user[0] },  process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP});
+    user[0].token = jwt.sign({ user: user[0] }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    user[0].refreshToken = jwt.sign({ user: user[0] }, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
     return user[0];
 }
 
@@ -33,8 +33,8 @@ async function registerAsync(user) {
     await dal.executeQueryAsync(sql, params);
     delete user.credentials;
     delete user.password;
-    user.token = jwt.sign({ user: user },process.env.AUTH_SALT, { expiresIn:process.env.AUTH_EXP });
-    user.refreshToken = jwt.sign({ user: user },process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    user.token = jwt.sign({ user: user }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
+    user.refreshToken = jwt.sign({ user: user }, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
     return user;
 }
 
