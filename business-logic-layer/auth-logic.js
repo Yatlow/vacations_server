@@ -15,14 +15,14 @@ async function loginAsync(credentials) {
         `, [credentials.email, credentials.password]
     );
     console.log(userResult)
-    const user = userResult.rows[0];
     if (!userResult || userResult.rowCount < 1) return null;
+    const user = userResult.rows[0];
     delete user.password;
-    delete user[0].password;
 
-    user[0].token = jwt.sign({ user: user[0] }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
-    user[0].refreshToken = jwt.sign({ user: user[0] }, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
-    return user[0];
+    user.token = jwt.sign({ user: user[0] }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    user.refreshToken = jwt.sign({ user: user[0] }, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    console.log(user)
+    return user;
 }
 
 async function registerAsync(user) {
