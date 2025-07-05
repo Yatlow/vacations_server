@@ -64,7 +64,6 @@ router.post("/refresh", async (request, response) => {
         if (!user) return response.status(401).send("User not found");
 
         const accessPayload = { user };
-        console.log(user)
         const token = jwt.sign(accessPayload,  process.env.AUTH_SALT,
             { expiresIn: process.env.AUTH_EXP });
         const newRefresh = jwt.sign({ user: { uuid: user.uuid }},
