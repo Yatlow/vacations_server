@@ -13,7 +13,8 @@ function getAllTrackingsAsync() {
 
 function addTrackingAsync(uuid, vacation_id) {
     return dal.executeQueryAsync(`
-        INSERT IGNORE INTO tracked (uid, vacation_id) VALUES ($1, $2)
+        INSERT INTO tracked (uid, vacation_id) VALUES ($1, $2)
+        ON CONFLICT DO NOTHING;
         `, [uuid, vacation_id])
 }
 
@@ -58,13 +59,13 @@ function editVacationAsync(vacationData) {
     }
 }
 async function addVacationAsync(vacationData) {
-    const lastId=await dal.executeQueryAsync(`SELECT MAX(id) FROM vacations;`,[]);
+    const lastId = await dal.executeQueryAsync(`SELECT MAX(id) FROM vacations;`, []);
     return dal.executeQueryAsync(`
         INSERT INTO vacations (id, destination, description, start_time, end_time, price, picture_url)
         values ($1,$2,$3,$4,$5,$6,$7)
         RETURNING id;
     `, [
-        lastId.rows[0].max+1,
+        lastId.rows[0].max + 1,
         vacationData.destination,
         vacationData.description,
         vacationData.start_time,
