@@ -59,12 +59,12 @@ router.post("/refresh", async (request, response) => {
         if (!refreshToken) return response.status(400).send("Missing refresh token");
 
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_SALT);
-        const [user] = await authLogic.getUserAsync([decoded.user.uuid]);
+        const [user] = await authLogic.getUserAsync(decoded.user.uuid);
         if (!user) return response.status(401).send("User not found");
 
         const accessPayload = { user };
         const token = jwt.sign(accessPayload,  process.env.AUTH_SALT,
-            { expiresIn: process.env.REFRESH_EXP });
+            { expiresIn: process.env.AUTH_EXP });
         const newRefresh = jwt.sign({ user: { uuid: user.uuid }},
             process.env.REFRESH_SALT,
             { expiresIn: process.env.REFRESH_EXP });
