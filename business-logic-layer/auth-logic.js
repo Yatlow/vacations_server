@@ -28,13 +28,13 @@ async function registerAsync(user) {
 
     const sql = `INSERT INTO users (uuid, first_name, family_name, email, password, role)
   VALUES ($1, $2, $3, $4, $5, $6)`;
-    const params = [user.uuid, user.first_name, user.familyName, user.credentials.email, user.password, user.role]
+    const params = [user.uuid, user.firstName, user.familyName, user.credentials.email, user.password, user.role]
     await dal.executeQueryAsync(sql, params);
     
     
      const userPayload = {
         uuid: user.uuid,
-        first_name: user.first_name,
+        firstName: user.firstName,
         familyName: user.familyName,
         email: user.credentials.email,
         role: user.role
