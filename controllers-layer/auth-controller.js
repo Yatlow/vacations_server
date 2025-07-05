@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt =require("jsonwebtoken")
 
 const authLogic = require("../business-logic-layer/auth-logic");
 const Credentials = require("../model/credentials");
