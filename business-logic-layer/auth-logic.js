@@ -28,13 +28,13 @@ async function registerAsync(user) {
 
     const sql = `INSERT INTO users (uuid, first_name, family_name, email, password, role)
   VALUES ($1, $2, $3, $4, $5, $6)`;
-    const params = [user.uuid, user.firstName, user.familyName, user.credentials.email, user.password, user.role]
+    const params = [user.uuid, user.first_name, user.familyName, user.credentials.email, user.password, user.role]
     await dal.executeQueryAsync(sql, params);
     
     
      const userPayload = {
         uuid: user.uuid,
-        firstName: user.firstName,
+        first_name: user.first_name,
         familyName: user.familyName,
         email: user.credentials.email,
         role: user.role
@@ -67,7 +67,7 @@ async function getAllEmailsAsync() {
 }
 async function getUserAsync(uuid){
     return await dal.executeQueryAsync(`
-        SELECT uuid, firstName, familyName, email, role FROM users WHERE uuid = $1
+        SELECT uuid, first_name, family_name, email, role FROM users WHERE uuid = $1
         `,[uuid])
 }
 

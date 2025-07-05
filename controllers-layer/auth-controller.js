@@ -24,7 +24,7 @@ router.post("/login", async (request, response) => {
 
 router.post("/register", async (request, response) => {
     try {
-        if (!request.body.firstName || !request.body.familyName) {
+        if (!request.body.first_name || !request.body.family_name) {
             return response.status(400).send("cannot register without a valid name!")
         }
         const credentials = new Credentials(request.body);
@@ -40,8 +40,8 @@ router.post("/register", async (request, response) => {
 
         const newUser = {
             credentials,
-            firstName: request.body.firstName,
-            familyName: request.body.familyName,
+            first_name: request.body.first_name,
+            family_name: request.body.family_name,
             role: request.body.role || "user",
         }
 
