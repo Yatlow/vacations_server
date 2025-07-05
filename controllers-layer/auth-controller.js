@@ -60,6 +60,7 @@ router.post("/refresh", async (request, response) => {
 
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_SALT);
         const res= await authLogic.getUserAsync(decoded.user.uuid);
+        
         const user= (res.rows[0])
         
         if (!user) return response.status(401).send("User not found");
@@ -70,7 +71,7 @@ router.post("/refresh", async (request, response) => {
         const newRefresh = jwt.sign({ user: { uuid: user.uuid }},
             process.env.REFRESH_SALT,
             { expiresIn: process.env.REFRESH_EXP });
-        return response.send({ token, refreshToken: newRefresh });
+        return response.send({ token, refreshToken: newRefresh ,res});
     }
     catch (error) {
         if (error.name === "TokenExpiredError")
