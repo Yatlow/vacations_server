@@ -17,7 +17,7 @@ async function loginAsync(credentials) {
     const user = userResult.rows[0];
     delete user.password;
 
-    user.token = jwt.sign({ user }, process.env.AUTH_SALT, { expiresIn: process.env.REFRESH_EXP });
+    user.token = jwt.sign({ user }, process.env.AUTH_SALT, { expiresIn: process.env.AUTH_EXP });
     user.refreshToken = jwt.sign({ user}, process.env.REFRESH_SALT, { expiresIn: process.env.REFRESH_EXP });
     return user;
 }
