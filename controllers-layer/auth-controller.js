@@ -59,11 +59,8 @@ router.post("/refresh", async (request, response) => {
         if (!refreshToken) return response.status(400).send("Missing refresh token");
 
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_SALT);
-        console.log(decoded)
         const res= await authLogic.getUserAsync(decoded.user.uuid);
-        console.log(res);
         const user= (res.rows[0])
-        console.log(user);
         
         if (!user) return response.status(401).send("User not found");
 
