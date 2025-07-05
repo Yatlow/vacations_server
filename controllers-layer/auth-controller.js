@@ -40,8 +40,8 @@ router.post("/register", async (request, response) => {
 
         const newUser = {
             credentials,
-            first_name: request.body.first_name,
-            family_name: request.body.family_name,
+            firstName: request.body.firstName,
+            familyName: request.body.familyName,
             role: request.body.role || "user",
         }
 
