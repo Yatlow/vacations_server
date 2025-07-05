@@ -60,6 +60,7 @@ router.post("/refresh", async (request, response) => {
 
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_SALT);
         const res= await authLogic.getUserAsync(decoded.user.uuid);
+        console.log(res);
         const user= (res.rows[0])
         console.log(user);
         
