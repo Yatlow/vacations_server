@@ -65,6 +65,11 @@ async function getAllEmailsAsync() {
         `, [])
 
 }
+async function getUserAsync(uuid){
+    return await dal.executeQueryAsync(`
+        SELECT uuid, firstName, familyName, email, role FROM users WHERE uuid = $1
+        `,[uuid])
+}
 
 
 function hash(plainText) {
@@ -77,5 +82,6 @@ module.exports = {
     registerAsync,
     loginAsync,
     getAllEmailsAsync,
-    refreshTokenAsync
+    refreshTokenAsync,
+    getUserAsync
 };

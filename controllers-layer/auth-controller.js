@@ -54,17 +54,26 @@ router.post("/register", async (request, response) => {
 
 router.post("/refresh", async (request, response) => {
     try {
-        const refreshToken = request.body.refreshToken;
-        if (!refreshToken) {
-            return response.status(403).send("No refresh token provided");
-        }        
-        const newToken = await authLogic.refreshTokenAsync(refreshToken);
-        response.send(newToken);
+        const { refreshToken } = request.body;
+        if (!refreshToken) return response.status(400).send("Missing refresh token");
+
+        const decoded = jwt.verify(refreshToken, config.authSecrets.refreshSalt);
+        const [user] = await authLogic.getUserAsync([decoded.user.uuid]);
+        console.log(refreshToken,user,decoded.user.uuid)
+        if (!user) return response.status(401).send("User not found");
+
+        const accessPayload = { user };
+        const token = jwt.sign(accessPayload, config.authSecrets.salt,
+            { expiresIn: config.server.tokenExpiration });
+        const newRefresh = jwt.sign({ uuid: user.uuid },
+            config.authSecrets.refreshSalt,
+            { expiresIn: config.server.refreshExpiration });
+        return response.send({ token, refreshToken: newRefresh });
     }
     catch (error) {
-        if (error.err){
-            response.status(500).send(error.err);
-        }else response.status(500).send(err.message)
+        if (error.name === "TokenExpiredError")
+            return response.status(403).send("Refresh token expired");
+        return response.status(500).send(error.message);
     }
 });
 
