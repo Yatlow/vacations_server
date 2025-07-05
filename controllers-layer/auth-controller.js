@@ -65,7 +65,7 @@ router.post("/refresh", async (request, response) => {
         const accessPayload = { user };
         const token = jwt.sign(accessPayload, config.authSecrets.salt,
             { expiresIn: config.server.tokenExpiration });
-        const newRefresh = jwt.sign({ uuid: user.uuid },
+        const newRefresh = jwt.sign({ user: { uuid: user.uuid }},
             config.authSecrets.refreshSalt,
             { expiresIn: config.server.refreshExpiration });
         return response.send({ token, refreshToken: newRefresh });
