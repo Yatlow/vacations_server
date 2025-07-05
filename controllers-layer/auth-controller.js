@@ -59,7 +59,6 @@ router.post("/refresh", async (request, response) => {
 
         const decoded = jwt.verify(refreshToken, config.authSecrets.refreshSalt);
         const [user] = await authLogic.getUserAsync([decoded.user.uuid]);
-        console.log(refreshToken,user,decoded.user.uuid)
         if (!user) return response.status(401).send("User not found");
 
         const accessPayload = { user };

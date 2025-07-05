@@ -13,7 +13,7 @@ function getAllTrackingsAsync() {
 
 function addTrackingAsync(uuid, vacation_id) {
     return dal.executeQueryAsync(`
-        INSERT INTO tracked (uid, vacation_id) VALUES ($1, $2)
+        INSERT IGNORE INTO tracked (uid, vacation_id) VALUES ($1, $2)
         `, [uuid, vacation_id])
 }
 
