@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const vacationController = require("./controllers-layer/vacation-controller");
 const authController = require("./controllers-layer/auth-controller");
+const pingController = require("./controllers-layer/ping");
 
 
 const server = express();
@@ -11,9 +12,7 @@ server.use(express.json());
 
 server.use("/vacations", vacationController);
 server.use("/auth", authController);
-server.get("/ping", async (req, res) => {
-    res.send("hello!")
-})
+server.get("/ping", pingController)
 
 
 server.use("*", (req, res) => {
