@@ -149,7 +149,7 @@ router.put("/update", verifyLoggedIn, verifyAdmin, async (request, response) => 
         }
         else {
             const result = await vacationLogic.editVacationAsync(validVacation);
-            response.send(result,validVacation.picture_url);
+            response.send({result,pic:validVacation.picture_url});
         }
     } catch (error) {
         console.log(error);
