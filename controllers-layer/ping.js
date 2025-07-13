@@ -13,5 +13,8 @@ router.get('/',async (req,res)=>{
             response.status(500).send({ message: "Server error" });
         }
 })
+router.get('/hello',(req,res)=>{
+    res.send("hello!")
+})
 
 module.exports=router;

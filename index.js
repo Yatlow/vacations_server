@@ -12,7 +12,7 @@ server.use(express.json());
 
 server.use("/vacations", vacationController);
 server.use("/auth", authController);
-server.get("/ping", pingController)
+server.use("/ping", pingController)
 
 
 server.use("*", (req, res) => {
