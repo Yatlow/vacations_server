@@ -103,7 +103,7 @@ function getRandomOtp() {
 
 async function insertOtpAsync(email, otp, uuid) {
     await dal.executeQueryAsync(`
-    DELETE FROM otps WHERE email = $1   
+    DELETE FROM otps WHERE email = $1;
     `, [email]);
 
     const deleteRes = await dal.executeQueryAsync(`
@@ -111,7 +111,7 @@ async function insertOtpAsync(email, otp, uuid) {
     `);
     const insertRes = await dal.executeQueryAsync(`
         INSERT INTO otps (email, code,uuid, expires_at)
-        VALUES ($1, $2, $3, DATE_ADD(NOW(), INTERVAL 1 MINUTE))
+        VALUES ($1, $2, $3, DATE_ADD(NOW(), INTERVAL '1 minute'))
     `, [email, otp, uuid]);
 
     return { insertRes, deleteRes }
