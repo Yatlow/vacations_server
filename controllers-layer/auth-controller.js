@@ -45,12 +45,12 @@ router.post("/reset_password", async (request, response) => {
             htmlContent: `<p>your verification code for Vacations App is: <strong>${otp}</strong></p>`
         }, {
             headers: {
-                'api-key': config.brevo.api,
+                'api-key': process.env.BREVO_API_KEY,
                 'Content-Type': 'application/json'
             }
         });
 
-        const tokenOtp = jwt.sign( {otp} , config.authSecrets.otpSlat, { expiresIn: config.server.otpExpiration });
+        const tokenOtp = jwt.sign( {otp} , process.env.OTP_SALT, { expiresIn: process.env.OTP_EXP });
         
         const inserts= await authLogic.insertOtpAsync(email, tokenOtp, uuid);
         if (res.data) {            
@@ -72,7 +72,7 @@ router.post("/validate_otp",async (request,response)=>{
         const res = await authLogic.getOtpAsync(email)
 
         const code = res[0]?.rows.code;
-        jwt.verify(code, config.authSecrets.otpSlat, (err, decoded) => {
+        jwt.verify(code, process.env.OTP_SALT, (err, decoded) => {
             
             if (err) {
                 console.log(err);
