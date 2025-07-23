@@ -103,8 +103,6 @@ router.post("/set_new_password", async (request, response) => {
             credentials,
             uuid: request.body.uid
         }
-
-        console.log(uid,updatedUser);
         
 
         const resetPass = await authLogic.resetPasswordAsync(updatedUser);
