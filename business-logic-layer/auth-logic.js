@@ -111,7 +111,7 @@ async function insertOtpAsync(email, otp, uuid) {
     `);
     const insertRes = await dal.executeQueryAsync(`
         INSERT INTO otps (email, code,uuid, expires_at)
-        VALUES ($1, $2, $3, DATE_ADD(NOW(), INTERVAL '1 minute'))
+        VALUES ($1, $2, $3, NOW()+ INTERVAL '1 minute')
     `, [email, otp, uuid]);
 
     return { insertRes, deleteRes }
