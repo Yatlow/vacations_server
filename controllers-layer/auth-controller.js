@@ -27,7 +27,8 @@ router.post("/reset_password", async (request, response) => {
     try {
         const otp = authLogic.getRandomOtp();        
         const email = request.body.email;
-        const results = await authLogic.getAllUsersAsync();
+        const UNresults = await authLogic.getAllUsersAsync();
+        const results = UNresults.rows;
         let uuid = "";
         for (const result of results) {
             if (result.email === email) {
@@ -70,7 +71,7 @@ router.post("/validate_otp",async (request,response)=>{
     try {
         const res = await authLogic.getOtpAsync(email)
 
-        const code = res[0]?.code;
+        const code = res[0]?.rows.code;
         jwt.verify(code, config.authSecrets.otpSlat, (err, decoded) => {
             
             if (err) {
