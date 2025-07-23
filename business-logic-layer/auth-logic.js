@@ -64,24 +64,94 @@ async function getAllEmailsAsync() {
         select email from users
         `, [])
 
-}
+};
+
+async function getAllUsersAsync() {
+    return await dal.executeQueryAsync(`
+        select email,uuid from users
+        `)
+};
+
 async function getUserAsync(uuid){
     return await dal.executeQueryAsync(`
         SELECT uuid, first_name, family_name, email, role FROM users WHERE uuid = $1
         `,[uuid])
-}
+};
 
+function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+function getRandomOtp() {
+    const letters = "abcdefghijklmnopqrstuv".split("");
+    const numbers = "123456789".split("");
+    const otp = [];
+
+    for (let i = 0; i < 5; i++) {
+        const chance = Math.random();
+        if (chance < 0.25) {
+            otp.push(numbers[getRandom(0, numbers.length - 1)]);
+        } else if (chance > 0.88) {
+            otp.push(letters[getRandom(0, letters.length - 1)]);
+        } else {
+            otp.push(letters[getRandom(0, letters.length - 1)].toUpperCase());
+        }
+    }
+
+    return otp.join("");
+};
+
+async function insertOtpAsync(email, otp, uuid) {
+    await dal.executeQueryAsync(`
+    DELETE FROM otps WHERE email = $1;    
+    `, [email]);
+
+    const deleteRes = await dal.executeQueryAsync(`
+        DELETE FROM otps WHERE expires_at <= NOW()
+    `);
+    const insertRes = await dal.executeQueryAsync(`
+        INSERT INTO otps (email, code,uuid, expires_at)
+        VALUES ($1, $2, $3, DATE_ADD(NOW(), INTERVAL 1 MINUTE))
+    `, [email, otp, uuid]);
+
+    return { insertRes, deleteRes }
+};
+
+function getOtpAsync(email) {
+    return dal.executeQueryAsync(`
+    select * from otps
+    where email=$1  
+    `, [email]);
+};
+
+async function resetPasswordAsync(user) {
+    user.password = hash(user.credentials.password);
+    const res = await dal.executeQueryAsync(`
+        UPDATE users SET password=$1
+        where uuid=$2`, [user.password,user.uuid]);
+    const del= await dal.executeQueryAsync(`
+        DELETE FROM otps WHERE uuid = $1;
+        `,[user.uuid])
+    delete user.credentials;
+    delete user.password;
+    return {res,del};
+}
 
 function hash(plainText) {
     if (!plainText) return null;
     return crypto.createHmac("sha512", process.env.HASH_SALT).update(plainText).digest("hex");
 
-}
+};
 
 module.exports = {
     registerAsync,
     loginAsync,
     getAllEmailsAsync,
     refreshTokenAsync,
-    getUserAsync
+    getUserAsync,
+    getRandomOtp,
+    insertOtpAsync,
+    getOtpAsync,
+    getAllUsersAsync,
+    resetPasswordAsync
 };

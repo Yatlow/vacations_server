@@ -1,5 +1,6 @@
 const express = require("express");
-const jwt =require("jsonwebtoken")
+const jwt =require("jsonwebtoken");
+const axios = require('axios');
 
 const authLogic = require("../business-logic-layer/auth-logic");
 const Credentials = require("../model/credentials");
@@ -16,6 +17,92 @@ router.post("/login", async (request, response) => {
         if (!loggedInUser) return response.status(401).send("Incorrect username or password.");
 
         response.send(loggedInUser);
+    }
+    catch (err) {
+        response.status(500).send(err.message);
+    }
+});
+
+router.post("/reset_password", async (request, response) => {
+    try {
+        const otp = authLogic.getRandomOtp();        
+        const email = request.body.email;
+        const results = await authLogic.getAllUsersAsync();
+        let uuid = "";
+        for (const result of results) {
+            if (result.email === email) {
+                uuid = result.uuid;
+                break;
+            }
+        }
+        if (!uuid) return response.status(401).send("this email does not exist");
+
+        const res = await axios.post('https://api.brevo.com/v3/smtp/email', {
+            sender: { name: 'Vacations App', email: 'yisrael@atlow.co.il' },
+            to: [{ email }],
+            subject: 'your verification code for Vacations',
+            htmlContent: `<p>your verification code for Vacations App is: <strong>${otp}</strong></p>`
+        }, {
+            headers: {
+                'api-key': config.brevo.api,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const tokenOtp = jwt.sign( {otp} , config.authSecrets.otpSlat, { expiresIn: config.server.otpExpiration });
+        
+        const inserts= await authLogic.insertOtpAsync(email, tokenOtp, uuid);
+        if (res.data) {            
+            return response.send({ data: res.data ,inserts})
+        } else return response.status(400).send({ data: "Error sending email" })
+    } catch (err) {
+        console.log(err);
+        
+        return ({ err: err.response?.data || err.message })
+    }
+});
+
+router.post("/validate_otp",async (request,response)=>{
+    const otp = String(request.body.otp);
+    const email = String(request.body.email);
+    
+    if (!otp) return response.status(400).send("no OTP sent");
+    try {
+        const res = await authLogic.getOtpAsync(email)
+
+        const code = res[0]?.code;
+        jwt.verify(code, config.authSecrets.otpSlat, (err, decoded) => {
+            
+            if (err) {
+                console.log(err);
+                return response.status(403).send("Invalid or expired OTP");
+            }
+            if (decoded.otp !== otp) {
+                return response.status(401).send("Incorrect OTP");
+            }
+            else {
+                return response.send(res[0].uuid)
+            }
+        });
+    } catch (error) {
+        response.send(error)
+    }
+});
+
+router.post("/set_new_password", async (request, response) => {
+    try {
+        const credentials = new Credentials(request.body);
+        const errors = credentials.validate();
+        if (errors) return response.status(400).send(errors);
+
+        const updatedUser={
+            credentials,
+            uuid:request.body.uid
+        }
+
+        const resetPass = await authLogic.resetPasswordAsync(updatedUser);
+        
+        response.send(resetPass);
     }
     catch (err) {
         response.status(500).send(err.message);
