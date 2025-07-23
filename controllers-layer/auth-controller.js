@@ -1,5 +1,5 @@
 const express = require("express");
-const jwt =require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const axios = require('axios');
 
 const authLogic = require("../business-logic-layer/auth-logic");
@@ -25,7 +25,7 @@ router.post("/login", async (request, response) => {
 
 router.post("/reset_password", async (request, response) => {
     try {
-        const otp = authLogic.getRandomOtp();        
+        const otp = authLogic.getRandomOtp();
         const email = request.body.email;
         const UNresults = await authLogic.getAllUsersAsync();
         const results = UNresults.rows;
@@ -50,23 +50,23 @@ router.post("/reset_password", async (request, response) => {
             }
         });
 
-        const tokenOtp = jwt.sign( {otp} , process.env.OTP_SALT, { expiresIn: process.env.OTP_EXP });
-        
-        const inserts= await authLogic.insertOtpAsync(email, tokenOtp, uuid);
-        if (res.data) {            
-            return response.send({ data: res.data ,inserts})
+        const tokenOtp = jwt.sign({ otp }, process.env.OTP_SALT, { expiresIn: process.env.OTP_EXP });
+
+        const inserts = await authLogic.insertOtpAsync(email, tokenOtp, uuid);
+        if (res.data) {
+            return response.send({ data: res.data, inserts })
         } else return response.status(400).send({ data: "Error sending email" })
     } catch (err) {
         console.log(err);
-        
+
         return ({ err: err.response?.data || err.message })
     }
 });
 
-router.post("/validate_otp",async (request,response)=>{
+router.post("/validate_otp", async (request, response) => {
     const otp = String(request.body.otp);
     const email = String(request.body.email);
-    
+
     if (!otp) return response.status(400).send("no OTP sent");
     try {
         const res = await authLogic.getOtpAsync(email)
@@ -81,7 +81,7 @@ router.post("/validate_otp",async (request,response)=>{
                 return response.status(401).send("Incorrect OTP");
             }
             else {
-                return response.send(res[0].uuid)
+                return response.send(res.rows[0]?.uuid)
             }
         });
     } catch (error) {
@@ -91,17 +91,24 @@ router.post("/validate_otp",async (request,response)=>{
 
 router.post("/set_new_password", async (request, response) => {
     try {
+        const { uid } = request.body;
+        if (!uid || typeof uid !== "string" || !/^[0-9a-fA-F-]{36}$/.test(uid)) {
+            return response.status(400).send("Invalid or missing UUID");
+        }
         const credentials = new Credentials(request.body);
         const errors = credentials.validate();
         if (errors) return response.status(400).send(errors);
 
-        const updatedUser={
+        const updatedUser = {
             credentials,
-            uuid:request.body.uid
+            uuid: request.body.uid
         }
 
-        const resetPass = await authLogic.resetPasswordAsync(updatedUser);
+        console.log(uid,updatedUser);
         
+
+        const resetPass = await authLogic.resetPasswordAsync(updatedUser);
+
         response.send(resetPass);
     }
     catch (err) {
@@ -117,7 +124,7 @@ router.post("/register", async (request, response) => {
         }
         const credentials = new Credentials(request.body);
         const results = await authLogic.getAllEmailsAsync();
-        const emails=results.rows;
+        const emails = results.rows;
         for (const email of emails) {
             if (email.email === credentials.email) {
                 return response.status(400).send("this email is already used");
@@ -147,17 +154,17 @@ router.post("/refresh", async (request, response) => {
         if (!refreshToken) return response.status(400).send("Missing refresh token");
 
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_SALT);
-        const res= await authLogic.getUserAsync(decoded.user.uuid);
-        const user= (res.rows[0])
+        const res = await authLogic.getUserAsync(decoded.user.uuid);
+        const user = (res.rows[0])
         if (!user) return response.status(401).send("User not found");
 
         const accessPayload = { user };
-        const token = jwt.sign(accessPayload,  process.env.AUTH_SALT,
+        const token = jwt.sign(accessPayload, process.env.AUTH_SALT,
             { expiresIn: process.env.AUTH_EXP });
-        const newRefresh = jwt.sign({ user: { uuid: user.uuid }},
+        const newRefresh = jwt.sign({ user: { uuid: user.uuid } },
             process.env.REFRESH_SALT,
             { expiresIn: process.env.REFRESH_EXP });
-        return response.send({ token, refreshToken: newRefresh ,res});
+        return response.send({ token, refreshToken: newRefresh, res });
     }
     catch (error) {
         if (error.name === "TokenExpiredError")
