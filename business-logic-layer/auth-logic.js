@@ -103,7 +103,7 @@ function getRandomOtp() {
 
 async function insertOtpAsync(email, otp, uuid) {
     await dal.executeQueryAsync(`
-    DELETE FROM otps WHERE email = $1;    
+    DELETE FROM otps WHERE email = $1   
     `, [email]);
 
     const deleteRes = await dal.executeQueryAsync(`
