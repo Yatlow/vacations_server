@@ -72,7 +72,6 @@ router.post("/validate_otp",async (request,response)=>{
         const res = await authLogic.getOtpAsync(email)
 
         const code = res.rows[0]?.code;
-        console.log(code,res)
         jwt.verify(code, process.env.OTP_SALT, (err, decoded) => {
             if (err) {
                 console.log(err);
@@ -106,6 +105,7 @@ router.post("/set_new_password", async (request, response) => {
         response.send(resetPass);
     }
     catch (err) {
+        console.log(err)
         response.status(500).send(err.message);
     }
 });
