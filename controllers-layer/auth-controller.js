@@ -71,9 +71,9 @@ router.post("/validate_otp",async (request,response)=>{
     try {
         const res = await authLogic.getOtpAsync(email)
 
-        const code = res[0]?.rows.code;
+        const code = res.rows[0]?.code;
+        console.log(code,res)
         jwt.verify(code, process.env.OTP_SALT, (err, decoded) => {
-            
             if (err) {
                 console.log(err);
                 return response.status(403).send("Invalid or expired OTP");

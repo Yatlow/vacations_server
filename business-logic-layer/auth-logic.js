@@ -91,9 +91,7 @@ function getRandomOtp() {
         const chance = Math.random();
         if (chance < 0.25) {
             otp.push(numbers[getRandom(0, numbers.length - 1)]);
-        } else if (chance > 0.88) {
-            otp.push(letters[getRandom(0, letters.length - 1)]);
-        } else {
+        } else{
             otp.push(letters[getRandom(0, letters.length - 1)].toUpperCase());
         }
     }
