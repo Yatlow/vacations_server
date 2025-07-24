@@ -39,7 +39,7 @@ router.post("/reset_password", async (request, response) => {
         if (!uuid) return response.status(401).send("this email does not exist");
 
         const res = await axios.post('https://api.brevo.com/v3/smtp/email', {
-            sender: { name: 'Vacations App', email: 'yisrael@atlow.co.il' },
+            sender: { name: 'Vacations App no-reply', email: 'yisrael@atlow.co.il' },
             to: [{ email }],
             subject: 'your verification code for Vacations',
             htmlContent: `<p>your verification code for Vacations App is: <strong>${otp}</strong></p>`
